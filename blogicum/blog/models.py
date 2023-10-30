@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+
 
 from core.models import PublishedCreatedModel
 from blog.constants import CHARFIELDS_MAX_LENGTH, MAX_CHAR_LENGTH_TO_STR
@@ -60,6 +62,11 @@ class Post(PublishedCreatedModel):
         help_text=('Если установить дату и время в будущем — '
                    'можно делать отложенные публикации.')
     )
+    image = models.ImageField(
+        'Изображение',
+        blank=True,
+        upload_to='posts_images',
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -87,3 +94,33 @@ class Post(PublishedCreatedModel):
 
     def __str__(self):
         return self.title[:MAX_CHAR_LENGTH_TO_STR]
+
+    def get_absolute_url(self):
+        return reverse('blog:post_detail', kwargs={'post_id': self.pk})
+
+
+class Comment(models.Model):
+    text = models.TextField('Текст',)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Добавлено',
+    )
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        verbose_name='Публикация',
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор',
+    )
+
+    class Meta:
+        default_related_name = 'comments'
+        ordering = ('created_at',)
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return self.text[:MAX_CHAR_LENGTH_TO_STR]
