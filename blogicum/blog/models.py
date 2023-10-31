@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 
-from core.models import PublishedCreatedModel
+from core.models import CreatedAt, PublishedCreatedModel
 from blog.constants import CHARFIELDS_MAX_LENGTH, MAX_CHAR_LENGTH_TO_STR
 
 
@@ -99,7 +99,9 @@ class Post(PublishedCreatedModel):
         return reverse('blog:post_detail', kwargs={'post_id': self.pk})
 
 
-class Comment(models.Model):
+class Comment(CreatedAt):
+    """Model Comment."""
+
     text = models.TextField('Текст',)
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -116,9 +118,8 @@ class Comment(models.Model):
         verbose_name='Автор',
     )
 
-    class Meta:
+    class Meta(CreatedAt.Meta):
         default_related_name = 'comments'
-        ordering = ('created_at',)
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
 
