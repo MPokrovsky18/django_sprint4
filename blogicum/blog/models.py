@@ -103,10 +103,6 @@ class Comment(CreatedAt):
     """Model Comment."""
 
     text = models.TextField('Текст',)
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Добавлено',
-    )
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
