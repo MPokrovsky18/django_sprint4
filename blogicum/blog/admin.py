@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-from blog.models import Category, Location, Post
+from blog.models import Category, Location, Post, Comment
 
 
 admin.site.unregister(Group)
@@ -69,3 +69,14 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('is_published',)
     inlines = (PostInline,)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        'text',
+        'created_at',
+        'author',
+    )
+    search_fields = ('text',)
+    date_hierarchy = 'created_at'
