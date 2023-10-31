@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.utils.safestring import mark_safe
 
 from blog.models import Category, Location, Post, Comment
 
@@ -8,11 +9,17 @@ admin.site.unregister(Group)
 admin.site.empty_value_display = 'Не задано'
 
 
+class CommentInline(admin.TabularInline):
+    model = Comment
+    extra = 0
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         'title',
         'text',
+        'post_image',
         'is_published',
         'created_at',
         'pub_date',
@@ -31,6 +38,15 @@ class PostAdmin(admin.ModelAdmin):
         'location',
     )
     date_hierarchy = 'pub_date'
+    inlines = (CommentInline,)
+
+    @admin.display(description="Изображение")
+    def post_image(self, obj):
+        return (
+            mark_safe(f'<img src={obj.image.url} width="80" height="60">')
+            if obj.image
+            else 'без изображения'
+        )
 
 
 class PostInline(admin.TabularInline):
