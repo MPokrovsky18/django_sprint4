@@ -10,12 +10,6 @@ class AuthorVerificationMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user == self.get_object().author
 
-    def handle_no_permission(self):
-        return redirect(
-            'blog:post_detail',
-            post_id=self.kwargs['post_id']
-        )
-
 
 class PostMixin(LoginRequiredMixin, AuthorVerificationMixin):
     model = Post
@@ -32,6 +26,12 @@ class PostMixin(LoginRequiredMixin, AuthorVerificationMixin):
         context = super().get_context_data(**kwargs)
         context['form'] = PostForm(instance=self.get_object())
         return context
+
+    def handle_no_permission(self):
+        return redirect(
+            'blog:post_detail',
+            post_id=self.kwargs[self.pk_url_kwarg]
+        )
 
 
 class CommentMixin(LoginRequiredMixin):

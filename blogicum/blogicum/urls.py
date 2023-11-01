@@ -3,7 +3,7 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from . import views
+from core.views import UserCreateView
 
 
 handler404 = 'pages.views.page_not_found'
@@ -15,7 +15,7 @@ urlpatterns = [
     path('auth/', include('django.contrib.auth.urls')),
     path(
         'auth/registration/',
-        views.UserCreateView.as_view(),
+        UserCreateView.as_view(),
         name='registration'
     ),
     path('', include('blog.urls'), name='blog'),

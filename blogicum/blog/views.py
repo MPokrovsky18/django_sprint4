@@ -106,7 +106,7 @@ class PostListView(ListView):
         return (
             Post.objects
             .select_related_fields()
-            .published()
+            .filter_is_published()
             .with_comment_count()
         )
 
@@ -130,7 +130,7 @@ class ProfilePostsListView(ListView):
             .with_comment_count()
         )
         if not self.author == self.request.user:
-            posts = posts.published()
+            posts = posts.filter_is_published()
 
         return posts
 
@@ -157,7 +157,7 @@ class CategoryPostListView(ListView):
         return (
             self.category.posts
             .select_related_fields()
-            .published()
+            .filter_is_published()
             .with_comment_count()
         )
 

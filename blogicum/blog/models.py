@@ -15,7 +15,7 @@ class PostQuerySet(models.QuerySet):
             'author',
         )
 
-    def published(self):
+    def filter_is_published(self):
         return self.filter(
             is_published=True,
             category__is_published=True,
