@@ -1,10 +1,32 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-
+from django.utils.timezone import now
 
 from core.models import CreatedAt, PublishedCreatedModel
 from blog.constants import CHARFIELDS_MAX_LENGTH, MAX_CHAR_LENGTH_TO_STR
+
+
+class PostQuerySet(models.QuerySet):
+    def select_related_fields(self):
+        return self.select_related(
+            'category',
+            'location',
+            'author',
+        )
+
+    def published(self):
+        return self.filter(
+            is_published=True,
+            category__is_published=True,
+            pub_date__lte=now(),
+        )
+
+    def with_comment_count(self):
+        return (
+            self.annotate(comment_count=models.Count('comments'))
+            .order_by('-pub_date')
+        )
 
 
 User = get_user_model()
@@ -85,6 +107,7 @@ class Post(PublishedCreatedModel):
         null=True,
         verbose_name='Категория',
     )
+    objects = PostQuerySet.as_manager()
 
     class Meta:
         default_related_name = 'posts'
